@@ -1,17 +1,17 @@
 #!/usr/bin/python3
-# lockboxes
+"""Script will unlock list of lists"""
+
 
 def canUnlockAll(boxes):
-    x = len(boxes)
-    item = [False] * x
-    item[0] = True
-    stack = [0]
+    """This function will take a list of lists and the content
+       of a list will unlock other lists
+    """
 
-    while stack:
-        box = stack.pop()
-        for each in boxes[box]:
-            if each >= 0 and each < x and not item[each]:
-                item[each] = True
-                stack.append(each)
-
-    return all(item)
+    keys = [0]
+    for key in keys:
+        for boxKey in boxes[key]:
+            if boxKey not in keys and boxKey < len(boxes):
+                keys.append(boxKey)
+    if len(keys) == len(boxes):
+        return True
+    return False
