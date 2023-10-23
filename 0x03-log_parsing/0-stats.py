@@ -1,27 +1,49 @@
 #!/usr/bin/python3
+"""
+    script that reads stdin line by line and computes metrics
+"""
+import sys
 
-from sys import stdin
+
+def print_msg(codes, file_size):
+    print("File size: {}".format(file_size))
+    for key, val in sorted(codes.items()):
+        if val != 0:
+            print("{}: {}".format(key, val))
 
 
-size = 0
-code = {"200": 0, "301": 0, "400": 0, "401": 0,
-        "403": 0, "404": 0, "405": 0, "500": 0}
+file_size = 0
+code = 0
+count_lines = 0
+codes = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0
+}
 
 try:
-    for i, line in enumerate(stdin, 1):
-        split = line.split(" ")
-        if len(split) < 2:
-            continue
-        if split[-2] in code:
-            code[split[-2]] = code[split[-2]] + 1
-        size = size + eval(split[-1])
-        if i % 10 == 0:
-            print("File size: {}".format(size))
-            for key in sorted(code.keys()):
-                if code[key] > 0:
-                    print("{}: {}".format(key, code[key]))
+    for line in sys.stdin:
+        parsed_line = line.split()
+        parsed_line = parsed_line[::-1]
+
+        if len(parsed_line) > 2:
+            count_lines += 1
+
+            if count_lines <= 10:
+                file_size += int(parsed_line[0])
+                code = parsed_line[1]
+
+                if (code in codes.keys()):
+                    codes[code] += 1
+
+            if (count_lines == 10):
+                print_msg(codes, file_size)
+                count_lines = 0
+
 finally:
-    print("File size: {}".format(size))
-    for key in sorted(code.keys()):
-        if code[key] > 0:
-            print("{}: {}".format(key, code[key]))
+    print_msg(codes, file_size)
